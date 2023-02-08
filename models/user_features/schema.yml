@@ -1,0 +1,7 @@
+version: 2
+
+sources:
+  - name: metrics
+    schema: rudderstack
+    tables:
+      - name: rs_user_features_defs

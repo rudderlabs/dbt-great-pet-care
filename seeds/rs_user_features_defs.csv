@@ -1,0 +1,149 @@
+feature_id,team,owner,feature_name,data_type,description,reference,user_feature,source,event,property,segmentation,filter,function,schema
+1,Growth,Landin,first_website_ecap_date,date,Date of the first Identify call from Shopify Source or Javascript Source.  Filter by Context Library Name,,TRUE,Shopify Prod,"(Select i.id, coalesce(i.email, i.user_id) as email, idg.rudder_id, idg.labels, i.timestamp, dense_rank() Over (partition by idg.rudder_id order by i.""timestamp"") as feature_rank
+                from rudderstack.identifies i 
+                        inner join rudderstack.id_graph idg on i.user_id = idg.edge
+                where (coalesce(email, '') <> '' and context_library_name = 'RudderStack Shopify Cloud')
+                                        OR
+                          (user_id like '%@%' and context_library_name = 'RudderLabs JavaScript SDK')) z","""timestamp""",rudder_id,feature_rank = 1,MIN,
+,Growth,Landin,first_website_ecap_campaign,text,The UTM Campaign value that immediately proceeded the first_website_ecap_date,,TRUE,,page,,,,,
+,Growth,Landin,first_website_ecap_url,text,,,TRUE,,,,,,,
+,Growth,Landin,first_website_ecap_referrer,text,,,TRUE,,,,,,,
+,Growth,Landin,first_website_ecap_channel,text,,,TRUE,,,,,,,
+,Growth,Landin,first_website_ecap_form_id (on new identify call),text,,,TRUE,,,,,,,
+2,Growth,Landin,email,text,Current email address,"Same logic as first_website_capture_date but using the reverse timing.  In this case we want the last email they used, not the first",TRUE,Most Recent Occurance,"(Select i.id, coalesce(i.email, i.user_id) as email, idg.rudder_id, idg.labels, i.timestamp, dense_rank() Over (partition by idg.rudder_id order by i.""timestamp"" desc) as feature_rank
+                from rudderstack.identifies i 
+                        inner join rudderstack.id_graph idg on i.user_id = idg.edge
+                where (coalesce(email, '') <> '' )
+                                        OR
+                          (user_id like '%@%' and context_library_name = 'RudderLabs JavaScript SDK')
+        ) z",email,rudder_id,feature_rank = 1,MIN,
+,Growth,Landin,initial_cio_campaign (IGNORE / BENJI to TEST),text,,,TRUE,,,,,,,
+,Growth,Landin,first_order_completed_date_software_DAW,date,,,TRUE,Shopify Prod,,,,,,
+,Growth,Landin,first_order_completed_date_software_Desktop,date,,,TRUE,Shopify Prod,,,,,,
+,Growth,Landin,first_order_completed_date_box,date,,,TRUE,Shopify Prod,,,,,,
+,Growth,Landin,first_order_completed_date_mic,date,,,TRUE,Shopify Prod,,,,,,
+3,Growth,Landin,country,text,Country from identifies call,"Same logic as first_website_capture_date but using the reverse timing.  In this case we want the last email they used, not the first",TRUE,Most Recent Occurance,"(Select i.id, coalesce(i.email, i.user_id) as email, idg.rudder_id, coalesce(context_locale, address_country_name) as country,  idg.labels, i.timestamp, dense_rank() Over (partition by idg.rudder_id order by i.""timestamp"" desc) as feature_rank
+                from rudderstack.identifies i 
+                        inner join rudderstack.id_graph idg on i.user_id = idg.edge
+                 where coalesce(context_locale, address_country_name,  '') <> ''
+                        and context_library_name in ('RudderLabs JavaScript SDK', 'RudderStack Shopify Cloud')
+        ) z",country,rudder_id,feature_rank = 1,MIN,
+4,Growth,Landin,product_pages_viewed,text,Count of website page calls related to products,,TRUE,Shopify Prod,"(Select  idg.rudder_id, coalesce(i.category, i.name) as product_category, i.name as product_name, max(i.timestamp) as timestamp, max(i.timestamp) as product_last_viewed, count(i.timestamp) as product_view_count
+    from rudderstack.product_viewed i 
+       inner join rudderstack.id_graph idg on i.anonymous_id = idg.edge
+        Group by 1, 2, 3        
+        ) z","product_category || ':' || product_name || ':' || product_last_viewed || ':' || product_view_count, '~'",rudder_id,,LISTAGG,
+,Growth,Landin,products_viewed,text,"Count of 'Product Viewed' Track calls (similar to the above, but requires an additional click to imply more intent)",,TRUE,Shopify Prod,product_viewed,timestamp,rudder_id,,COUNT,
+,Growth,Landin,products_added_to_cart - (use product names; SEE TRACK CALL FROM SHOPIFY),text,List of products added to a cart,,TRUE,Shopify Prod,product_added,name,rudder_id,,LISTAGG,
+5,Growth,Landin,videos_played,text,Show which videos were watched and the maximum completion percentage of each,,TRUE,Shopify Prod,"(select rudder_id, video_id, video_title,  max(v_timestamp) as timestamp, min(v_timestamp) as video_first_play, max(v_timestamp) as video_last_played, max(video_playtime) as video_playtime, count(distinct session_id) as video_session_count
+        From (
+                                Select anonymous_id, video_id, video_title, v.timestamp as v_timestamp, seconds as video_playtime, context_session_id as session_id From rudderstack.video_ended v 
+                                        UNION ALL 
+                                Select anonymous_id, video_id, video_title, v.timestamp as v_timestamp, seconds as video_playtime, context_session_id as session_id From rudderstack.video_pause v
+                                        UNION ALL        
+                                Select anonymous_id, video_id, video_title, v.timestamp as v_timestamp, seconds as video_playtime, context_session_id as session_id From rudderstack.video_play v 
+                ) z 
+                inner join rudderstack.id_graph idg on z.anonymous_id = idg.edge
+                Group by 1, 2, 3
+        ) y","video_id || ':' || video_title || ':' || video_first_play || ':' || video_last_played || ':' || video_playtime || ':' || video_session_count , '~'",rudder_id,,LISTAGG,
+,Growth,Landin,last_cart_created_date_daw,date,,,,,,,,,,
+,Growth,Landin,last_cart_created_date_desktop,date,,,,,,,,,,
+,Growth,Landin,last_cart_created_date_box,date,,,,,,,,,,
+,Growth,Landin,last_cart_created_date_mic,date,The last time a cart was created (ever),,TRUE,Shopify Prod,cart_viewed,"""timestamp""",rudder_id,,MAX,
+,Growth,Landin,orders_completed_count,int,,,TRUE,,,,,,,
+,Growth,Landin,products_purchased,text,,,TRUE,,,,,,,
+,Growth,Landin,first_order_date,date,,,TRUE,,,,,,,
+,Growth,Landin,last_order_date,date,,,TRUE,,,,,,,
+,Growth,Landin,first_order_value,"numeric(12,2)",,,TRUE,,,,,,,
+,Growth,Landin,last_order_value,"numeric(12,2)",,,TRUE,,,,,,,
+,Growth,Landin,orders_completed_value,"numeric(12,2)",,,TRUE,,,,,,,
+6,Growth,Landin,app_created_account_date,datetime,Date user signed up for the app,,TRUE,Flutter Prod,"(Select  idg.rudder_id,  i.timestamp
+   from rudderstack.signup_complete i 
+   inner join rudderstack.id_graph idg on i.user_id = idg.edge
+) z","""timestamp""",rudder_id,,MIN,
+7,Growth,Landin,app_username,text,"Last signup event, grab the username. It gets created by default but can be changed",,TRUE,Flutter Prod,"(
+                select rudder_id, app_username, timestamp
+                From (
+                        Select  idg.rudder_id, i.timestamp, i.username as app_username, dense_rank() Over (partition by idg.rudder_id order by i.""timestamp"" desc) as feature_rank
+                        from rudderstack.signup_complete i 
+                                inner join rudderstack.id_graph idg on i.user_id = idg.edge
+                        ) z
+                where feature_rank = 1        
+) y        ",app_username,rudder_id,,MIN,
+8,Growth,Landin,app_last_opened,datetime,Last time the user opened the app,,TRUE,Flutter Prod,"(
+                Select  idg.rudder_id, i.timestamp, i.timestamp as app_last_opened
+                from rudderstack.application_opened i 
+                        inner join rudderstack.id_graph idg on i.user_id = idg.edge
+) z",app_last_opened,rudder_id,,MAX,
+9,Growth,Landin,app_became_a_broadcaster,date,,,TRUE,Flutter Prod,"(select rudder_id, i.timestamp
+   from rudderstack.clicked_become_broadcaster i
+   inner join rudderstack.id_graph idg on i.anonymous_id = idg.edge
+) z","""timestamp""",rudder_id,,MAX,
+10,Growth,Landin,web_last_visit,date,Last page call from the user,,TRUE,Shopify Prod,"(select rudder_id, i.timestamp
+   from rudderstack.pages i
+   inner join rudderstack.id_graph idg on i.anonymous_id = idg.edge
+) z","""timestamp""",rudder_id,,MAX,
+11,Growth,Landin,web_avg_session_length,"numeric(12,2)",,Preferably Weekly but let's explore across all time grains,,,"(
+                Select distinct rudder_id, context_session_id,  DATEDIFF ( seconds, min(timestamp), max(timestamp)) as session_duration, max(timestamp) as timestamp
+                From (
+                                Select  idg.rudder_id, context_session_id,  i.timestamp
+                                from 
+                                        (select anonymous_id, context_session_id,  i.timestamp 
+                                                from rudderstack.pages i 
+                                        where context_session_id is not null        
+                                        union 
+                                        Select  anonymous_id, context_session_id,  i.timestamp
+                                                from rudderstack.tracks i
+                                        where context_session_id is not null and context_library_name IN ('RudderStack Shopify Cloud', 'RudderLabs JavaScript SDK')
+                                        ) i         
+                                        inner join rudderstack.id_graph idg on i.anonymous_id = idg.edge
+                ) z
+                group by 1, 2        
+)y",session_duration,rudder_id,,AVG,
+12,Growth,Landin,web_n_sessions,int,,Preferably Weekly but let's explore across all time grains,TRUE,Shopify Prod,"(select rudder_id, context_session_id, timestamp
+   from rudderstack.pages i
+   inner join rudderstack.id_graph idg on i.anonymous_id = idg.edge
+) z",distinct context_session_id,rudder_id,,COUNT,
+13,Growth,Landin,days_since_last_cart_add,int,,,TRUE,Shopify Prod,"( select rudder_id, event_date, event_date as timestamp
+    from rudderstack.cart_line_items i
+      inner join rudderstack.id_graph idg on i.cart_token = idg.edge
+    where i.line_item_recency = 1        
+) z","datediff(days, max(event_date), getdate())",rudder_id,,,
+14,Growth,Landin,items_purchased_ever,text,,,TRUE,dbt,"(Select rudder_id, title, event_date as timestamp
+from rudderstack.order_line_items i
+        inner join rudderstack.id_graph idg on i.order_token = idg.edge
+where line_item_recency = 1        
+) z","listagg(distinct title, '~')",rudder_id,,,
+15,Growth,Landin,last_cart_status,text,(str: Purchased/abandoned/invalid),,TRUE,SQL,"(Select y.rudder_id, y.cart_token, o.financial_status, o.fulfillment_status, o.order_status_url, o.checkout_token, coalesce(o.fulfillment_status, o.financial_status, 'abandoned') as cart_status, y.""timestamp""
+From (
+		Select rudder_id, cart_token, ""timestamp"",  dense_rank() Over (partition by idg.rudder_id order by timestamp desc) as feature_rank
+		From (
+				Select token as cart_token, i.""timestamp"" 
+				from rudderstack.cart_create i
+				where products is not null 
+
+				union all 
+
+				Select token as cart_token, i.""timestamp"" 
+				from rudderstack.cart_update i
+				where products is not null 
+			) z
+			inner join rudderstack.id_graph idg on z.cart_token = idg.edge
+) y 
+	left outer join rudderstack.order_created o on y.cart_token = o.cart_token
+where feature_rank = 1  
+) x",cart_status,rudder_id,,MAX,
+16,Growth,Landin,dollar_value_of_items_in_cart,"numeric(12,2)",,,TRUE,Shopify Prod,"(Select rudder_id, line_price, event_date as timestamp
+                from rudderstack.cart_line_items i
+                inner join rudderstack.id_graph idg on i.cart_token = idg.edge
+        where i.line_item_recency = 1        
+        ) z",line_price,rudder_id,,SUM,
+17,Growth,Landin,items_in_cart,text,,,TRUE,dbt,"(Select rudder_id, title, event_date as timestamp
+          from rudderstack.cart_line_items i
+          inner join rudderstack.id_graph idg on i.cart_token = idg.edge
+          where i.line_item_recency = 1        
+) z ","listagg(distinct title, '~')",rudder_id,,,
+18,Growth,Landin,last_broadcast,datetime,,,TRUE,Flutter,"(Select  idg.rudder_id,  i.timestamp as last_broadcast, i.timestamp
+  from rudderstack.broadcast_started i 
+  inner join rudderstack.id_graph idg on i.user_id = idg.edge
+) z",last_broadcast,rudder_id,,MAX,
