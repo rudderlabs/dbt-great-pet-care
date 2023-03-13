@@ -85,10 +85,7 @@
         (
             select
 
-                {%- if source_column_name is not none %}
-                cast({{ string_literal(relation) }} as {{ type_string() }}) as {{ source_column_name }},
-                {%- endif %}
-
+                cast({{ dbt_utils.string_literal(relation) }} as {{ dbt_utils.type_string() }}) as {{ source_column_name }},
                 {% for col_name in ordered_column_names -%}
 
                     {%- set col = column_superset[col_name] %}
