@@ -1,4 +1,4 @@
-name: 'id_stitching'
+name: 'great_pet_care'
 version: '1.0.0'
 config-version: 2
 
@@ -17,14 +17,4 @@ clean-targets:
   - "dbt_packages"
 
 vars:
-  id-columns: ('anonymous_id', 'user_id', 'email', 'context_traits_email', 'cart_token',  'order_id', 'order_token', 'order_number', 'checkout_token', 'token',  'checkout_id', 'rudderid', 'formstack_email') 
-  ids-to-exclude: ('sources')           #ID's to exclude from our edges table because we know they are invalid options
-  start_date: '2022-01-01'              #This is the lower bound on date
-  end_date: '2022-09-30'                #This is the upper bound on date
-  lookback_days: [7,30,90,365]          #These are the days upto which the lookback features will be computed
-  card_types: ('mastercard', 'visa')    #These are the types of credit cards(in lowercase) that will be considered to check if the user has a credit card 
-  product_ref_var: 'product_id'         #This is the name of the property in the tracks calls that uniquely corresponds to the product
-  category_ref_var: 'category_l1'       #This is the name of the property in the tracks calls that corresponds to the product category
-  session_cutoff_in_sec: 1800           # A session is a continuous sequence of events, as long as the events are within this interval. If two consecutive events occur at an interval of greater than this, a new session is created.
-  id_stitcher_name: 'id_graph'          # Default table build by this project
-  shopify_order_tables: ('order_created', 'order_edited', 'order_fulfilled', 'order_paid')
+  id-columns: ('anonymous_id', 'user_id', 'email', 'context_traits_email', 'cart_token',  'order_id', 'order_token', 'order_number', 'checkout_token', 'token',  'checkout_id', 'rudderid', 'formstack_email')

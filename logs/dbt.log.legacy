@@ -17681,3 +17681,21 @@ Schema 'PROD_GREAT_PET_CARE.RUDDERSTACK_SETUP_TEST' does not exist or not author
 2023-03-13 19:07:55.589003 (Thread-348): handling poll request
 2023-03-13 19:07:55.589407 (Thread-348): 19:07:55  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': 'aee2be4c-4033-4004-8ee1-8a39394b1019', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f9c5165c850>]}
 2023-03-13 19:07:55.589870 (Thread-348): sending response (<Response 303 bytes [200 OK]>) to 10.0.187.199
+2023-03-13 19:08:20.787339 (Thread-350): handling status request
+2023-03-13 19:08:20.787846 (Thread-350): 19:08:20  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': 'aee2be4c-4033-4004-8ee1-8a39394b1019', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f9c51644460>]}
+2023-03-13 19:08:20.788296 (Thread-350): sending response (<Response 506 bytes [200 OK]>) to 10.0.187.199
+2023-03-13 19:08:25.432996 (Thread-351): handling status request
+2023-03-13 19:08:25.433495 (Thread-351): 19:08:25  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': 'aee2be4c-4033-4004-8ee1-8a39394b1019', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f9c516445b0>]}
+2023-03-13 19:08:25.433926 (Thread-351): sending response (<Response 489 bytes [200 OK]>) to 10.0.187.199
+2023-03-13 19:08:25.494734 (Thread-352): handling ps request
+2023-03-13 19:08:25.495230 (Thread-352): 19:08:25  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': 'aee2be4c-4033-4004-8ee1-8a39394b1019', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f9c51644550>]}
+2023-03-13 19:08:25.496176 (Thread-352): sending response (<Response 6382 bytes [200 OK]>) to 10.0.187.199
+2023-03-13 19:08:25.509805 (Thread-353): handling status request
+2023-03-13 19:08:25.510223 (Thread-353): 19:08:25  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': 'aee2be4c-4033-4004-8ee1-8a39394b1019', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f9c516448e0>]}
+2023-03-13 19:08:25.510703 (Thread-353): sending response (<Response 506 bytes [200 OK]>) to 10.0.187.199
+2023-03-13 19:08:25.696382 (Thread-354): handling status request
+2023-03-13 19:08:25.696888 (Thread-354): 19:08:25  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': 'aee2be4c-4033-4004-8ee1-8a39394b1019', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f9c51644160>]}
+2023-03-13 19:08:25.697624 (Thread-354): sending response (<Response 489 bytes [200 OK]>) to 10.0.187.199
+2023-03-13 19:08:25.710219 (Thread-355): handling ps request
+2023-03-13 19:08:25.710616 (Thread-355): 19:08:25  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': 'aee2be4c-4033-4004-8ee1-8a39394b1019', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f9c51640e50>]}
+2023-03-13 19:08:25.711460 (Thread-355): sending response (<Response 6383 bytes [200 OK]>) to 10.0.187.199
